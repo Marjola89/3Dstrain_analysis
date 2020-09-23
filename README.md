@@ -5,5 +5,8 @@
 
 The repository is composed of different sections 
  
-* [3Dstrain_analysis.py](https://https://github.com/Marjola89/3Dstrain_analysis/3Dstrain_analysis.py)   
-Strain computation with the tensor method
+* Strain3D_analysis.py](https://github.com/Marjola89/3Dstrain_analysis/Strain3D_analysis.py)   
+Strain computation with the tensor method (E=(F.TF-I)*0.5).
+
+* Strain3D_tag.py](https://github.com/Marjola89/3Dstrain_analysis/Strain3D_tag.py)   
+Strain computation with the simple method (E=L-L0/L0).
