@@ -64,12 +64,25 @@ for iP in range(0,10):
               os.chdir(file_strain)
               print(file_strain)
               # Step 2 - Transform ED_all from cartesian to cylindrical coordinates (Optional)
+              ED_datan = np.zeros((len(ED_data.iloc[:,0]),3))
+              ES_datan = np.zeros((len(ES_data.iloc[:,0]),3))
+              for iE in range (0,(len(ED_data.iloc[:,0]))):
+                     ED_datan[iE,:] = array(cart2cylc(ED_data.iloc[iE,0],ED_data.iloc[iE,1],ED_data.iloc[iE,2]))
+                     ES_datan[iE,:] = array(cart2cylc(ES_data.iloc[iE,0],ES_data.iloc[iE,1],ES_data.iloc[iE,2]))
+                     continue
+              ED_epi = ED_datan[0:(len(EDepi_data[:,0])),:]
+              ED_endo = ED_datan[(len(EDepi_data[:,0])):(len(ED_data.iloc[:,0])),:]
+              ES_epi = ES_datan[0:(len(ESepi_data[:,0])),:]
+              ES_endo = ES_datan[(len(ESepi_data[:,0])):(len(ES_data.iloc[:,0])),:]
+              """
+              # or use cartesian coordinates
               ED_datan = ED_data
               ES_datan = ES_data
               ED_epi = EDepi_data
               ED_endo = EDendo_data
               ES_epi = ESepi_data
               ES_endo = ESendo_data
+              """
               # Step 3 - Compute 1% of all data points in LV and find the 1% knn in ED and ES surface get the knns 
               sc_1 = round(1*len(ED_epi[:,0])/100)
               # find the sc_1 knn in surface for ED and ES
