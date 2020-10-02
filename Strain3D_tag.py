@@ -86,7 +86,7 @@ for iP in range(0,10):
               # Step 3 - Compute 1% of all data points in LV and find the 1% knn in ED and ES surface get the knns 
               sc_1 = round(1*len(ED_epi[:,0])/100)
               # find the sc_1 knn in surface for ED and ES
-              nPoints = np.arange(len(ED_datan.iloc[:,0]))
+              nPoints = np.arange(len(ED_datan[:,0]))
               nbrs1 = NearestNeighbors(n_neighbors=sc_1, algorithm='auto').fit(ED_endo, ED_epi)
               distances_ed, con_ed = nbrs1.kneighbors(ED_epi)
               nbrs2 = NearestNeighbors(n_neighbors=sc_1, algorithm='auto').fit(ES_endo, ES_epi)
