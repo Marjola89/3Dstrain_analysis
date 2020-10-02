@@ -10,7 +10,6 @@ import math
 import glob
 #from   tqdm import tqdm
 from sklearn.neighbors import NearestNeighbors
-#from scipy.stats import gaussian_kde
 #import matplotlib.pyplot as plt
 
 # Theta in degrees
@@ -45,30 +44,8 @@ def etens(m_cyl):
        X = np.linalg.pinv(X, rcond = 1e-21)
        FF = np.dot(a,np.dot(b.T,X))
        ident = np.eye(3)
-       #GG = np.linalg.pinv(FF, rcond = 1e-21)
-       #FF[0,2] = (-((FF[0,0]*GG[0,2])+(FF[0,1]+GG[1,2]))/GG[2,2]) # Moghaddam method
-       #GG[1,2] = (-((FF[0,2]*GG[2,2])+(FF[0,0]+GG[0,2]))/FF[0,1]) # Moghaddam method
-       def l1l2(mc1, mc2):
-              a_n = mc2.T
-              b_n = mc1.T
-              X_n = np.dot(b_n,b_n.T)
-              X_n = np.linalg.pinv(X_n, rcond = 1e-21)
-              FF_n = np.dot(a_n,np.dot(b_n.T,X_n))
-              GG_n = np.linalg.pinv(FF_n, rcond = 1e-21)
-              #print(np.sqrt(abs(np.linalg.eigvals(FF_n))))
-              lambda_F = np.sqrt(abs(np.linalg.eigvals(FF_n)))
-              lambda_G = np.sqrt(abs(np.linalg.eigvals(GG_n)))
-              lambdabind = np.concatenate([lambda_F, lambda_G], axis=0)
-              return lambdabind
-       #l1 = l1l2(m_cyl[:,:2], m_cyl[:,3:5]) # Moghaddam method
-       #l2 = l1l2(m_cyl[:,[0,2]], m_cyl[:,[3,5]]) # Moghaddam method
-       l3 = l1l2(m_cyl[:,[1,2]], m_cyl[:,[4,5]]) # Moghaddam method
        E_L = 0.5*((np.dot(FF.T,FF))-ident) # Lagrangian strain
        E_E = 0.5*(ident-(np.dot(np.linalg.pinv(FF.T),np.linalg.pinv(FF))))
-       #print(E_L)
-       #E_L[2,2] = ((1/(l1[0]*l1[1]))-(1/(l1[2]*l1[3])))*0.5 # Moghaddam method
-       #E_L[1,1] = ((1/(l2[0]*l2[1]))-(1/(l2[2]*l2[3])))*0.5 # Moghaddam method
-       E_L[0,0] = ((1/(l3[0]*l3[1]))-(1/(l3[2]*l3[3])))*0.5 # Moghaddam method
        E_L = E_L.flatten()
        E_E = E_E.flatten()
        strain = np.concatenate([E_L, E_E], axis=0)
