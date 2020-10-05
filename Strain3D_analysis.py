@@ -20,7 +20,6 @@ def cart2cylc(x, y, z):
        coord = [r,t,z]
        return coord
 
-# This function is optional
 # Theta in degrees
 def cart2sph(x, y, z):
        r = math.sqrt(np.power(x,2)+np.power(y,2)+np.power(z,2))
@@ -37,15 +36,28 @@ def unitvar(x, y, z):
        return coord
 
 # Strain computation
-def etens(m_cyl):
+def etens(m_cyl,J):
        b = m_cyl[:,:3].T
        a = m_cyl[:,3:6].T
        X = np.dot(b,b.T)
        X = np.linalg.pinv(X, rcond = 1e-21)
        FF = np.dot(a,np.dot(b.T,X))
        ident = np.eye(3)
+       def l1l2(mc1, mc2):
+              a_n = mc2.T
+              b_n = mc1.T
+              X_n = np.dot(b_n,b_n.T)
+              X_n = np.linalg.pinv(X_n, rcond = 1e-21)
+              FF_n = np.dot(a_n,np.dot(b_n.T,X_n))
+              GG_n = np.linalg.pinv(FF_n, rcond = 1e-21)
+              lambda_F = np.sqrt(abs(np.linalg.eigvals(FF_n)))
+              lambda_G = np.sqrt(abs(np.linalg.eigvals(GG_n)))
+              lambdabind = np.concatenate([lambda_F, lambda_G], axis=0)
+              return lambdabind
+       l1 = l1l2(m_cyl[:,:2], m_cyl[:,3:5]) # Calcualte the eigenvalues of the 2D deformation (x,y) in the principal direction
        E_L = 0.5*((np.dot(FF.T,FF))-ident) # Lagrangian strain
        E_E = 0.5*(ident-(np.dot(np.linalg.pinv(FF.T),np.linalg.pinv(FF))))
+       E_L[0,0] = ((1/(l1[0]*l1[1]))-(1/(l1[2]*l1[3])))*0.5 # Correct radial principal strain
        E_L = E_L.flatten()
        E_E = E_E.flatten()
        strain = np.concatenate([E_L, E_E], axis=0)
@@ -93,7 +105,7 @@ for iP in range(0,10):
               mid_ed = (EDendo_data[con_ed_epi[:,0],:]+EDepi_data)/2
               mid_es = (ESendo_data[con_es_epi[:,0],:]+ESepi_data)/2
               for iEx in range(0,49):
-                     mid_ed = (mid_ed+(EDendo_data[con_ed_epi[:,iEx],:]+EDepi_data)/2)/2 # to check!!
+                     mid_ed = (mid_ed+(EDendo_data[con_ed_epi[:,iEx],:]+EDepi_data)/2)/2 
                      mid_es = (mid_es+(ESendo_data[con_es_epi[:,iEx],:]+ESepi_data)/2)/2
                      continue
               mid_ed = pd.DataFrame(mid_ed, columns=["x","y","z"],)
