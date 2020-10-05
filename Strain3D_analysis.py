@@ -35,8 +35,9 @@ def unitvar(x, y, z):
        coord = [u, v, w]
        return coord
 
+
 # Strain computation
-def etens(m_cyl,J):
+def etens(m_cyl):
        b = m_cyl[:,:3].T
        a = m_cyl[:,3:6].T
        X = np.dot(b,b.T)
@@ -54,7 +55,7 @@ def etens(m_cyl,J):
               lambda_G = np.sqrt(abs(np.linalg.eigvals(GG_n)))
               lambdabind = np.concatenate([lambda_F, lambda_G], axis=0)
               return lambdabind
-       l1 = l1l2(m_cyl[:,:2], m_cyl[:,3:5]) # Calcualte the eigenvalues of the 2D deformation (x,y) in the principal direction
+       l1 = l1l2(m_cyl[:,:2], m_cyl[:,3:5]) # Calculate the eigenvalues of the 2D deformation (x,y) in the principal direction
        E_L = 0.5*((np.dot(FF.T,FF))-ident) # Lagrangian strain
        E_E = 0.5*(ident-(np.dot(np.linalg.pinv(FF.T),np.linalg.pinv(FF))))
        E_L[0,0] = ((1/(l1[0]*l1[1]))-(1/(l1[2]*l1[3])))*0.5 # Correct radial principal strain
@@ -91,7 +92,7 @@ for iP in range(0,10):
               ESendo_data = array(unitvar(ESendo.iloc[:,0],ESendo.iloc[:,1],ESendo.iloc[:,2])).T
               ES_data = np.concatenate([ESepi_data, ESendo_data], axis=0)
               ES_data= pd.DataFrame(ES_data, columns=["x", "y", "z"])
-              path_strain = "/mnt/storage/home/mthanaj/cardiac/Experiments_of_Maria/strain_analysis"
+              path_strain = "/mnt/storage/home/mthanaj/cardiac/Experiments_of_Maria/3Dstrain_analysis"
               file_strain = os.path.join(os.path.join(path_strain,folder[iP]))
               os.chdir(file_strain)
               print(file_strain)
@@ -105,7 +106,7 @@ for iP in range(0,10):
               mid_ed = (EDendo_data[con_ed_epi[:,0],:]+EDepi_data)/2
               mid_es = (ESendo_data[con_es_epi[:,0],:]+ESepi_data)/2
               for iEx in range(0,49):
-                     mid_ed = (mid_ed+(EDendo_data[con_ed_epi[:,iEx],:]+EDepi_data)/2)/2 
+                     mid_ed = (mid_ed+(EDendo_data[con_ed_epi[:,iEx],:]+EDepi_data)/2)/2 # to check!!
                      mid_es = (mid_es+(ESendo_data[con_es_epi[:,iEx],:]+ESepi_data)/2)/2
                      continue
               mid_ed = pd.DataFrame(mid_ed, columns=["x","y","z"],)
@@ -154,12 +155,15 @@ for iP in range(0,10):
                                   "ELRR","ELRT","ELRZ","ELTR","ELTT","ELTZ","ELZR","ELZT","ELZZ","EERR","EERT","EERZ","EETR",
                                   "EETT","EETZ","EEZR","EEZT","EEZZ"]
               neopheno.to_csv(os.path.join("middle_atlas/neopheno_"+str(ir)+".txt"), index=False, header=True)
-              #plt.plot(nPoints, attach_str_n)
+              #plt.plot(nPoints, attach_str[:,0])
+              #if not os.path.exists("images"):
+              #       os.mkdir("images")
               #plt.savefig("images/Err.png") 
               print(ir)
               ir+=1
               continue
        continue
+
 
 
        
